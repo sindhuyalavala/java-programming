@@ -1,0 +1,141 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+class MoneyTransactionSystem {
+    private Map<String, Double> accountBalances;
+
+    public MoneyTransactionSystem() {
+        accountBalances = new HashMap<>();
+    }
+
+    public void createAccount(String accountId) {
+        if (!accountBalances.containsKey(accountId)) {
+            accountBalances.put(accountId, 0.0);
+            System.out.println("Account created successfully.");
+        } else {
+            System.out.println("Account already exists.");
+        }
+    }
+
+    public void deposit(String accountId, double amount) {
+        if (amount <= 0) {
+            System.out.println("Invalid deposit amount.");
+            return;
+        }
+        if (accountBalances.containsKey(accountId)) {
+            double currentBalance = accountBalances.get(accountId);
+            accountBalances.put(accountId, currentBalance + amount);
+            System.out.println("Deposit successful. New balance: " + accountBalances.get(accountId));
+        } else {
+            System.out.println("Account not found.");
+        }
+    }
+
+    public void withdraw(String accountId, double amount) {
+        if (amount <= 0) {
+            System.out.println("Invalid withdrawal amount.");
+            return;
+        }
+        if (accountBalances.containsKey(accountId)) {
+            double currentBalance = accountBalances.get(accountId);
+            if (currentBalance >= amount) {
+                accountBalances.put(accountId, currentBalance - amount);
+                System.out.println("Withdrawal successful. New balance: " + accountBalances.get(accountId));
+            } else {
+                System.out.println("Insufficient balance.");
+            }
+        } else {
+            System.out.println("Account not found.");
+        }
+    }
+
+    public void transfer(String fromAccount, String toAccount, double amount) {
+        if (!accountBalances.containsKey(fromAccount) || !accountBalances.containsKey(toAccount)) {
+            System.out.println("One or both accounts not found.");
+            return;
+        }
+        double fromBalance = accountBalances.get(fromAccount);
+        if (fromBalance >= amount) {
+            accountBalances.put(fromAccount, fromBalance - amount);
+            accountBalances.put(toAccount, accountBalances.get(toAccount) + amount);
+            System.out.println("Transfer successful.");
+        } else {
+            System.out.println("Insufficient balance.");
+        }
+    }
+
+    public double checkBalance(String accountId) {
+        if (accountBalances.containsKey(accountId)) {
+            return accountBalances.get(accountId);
+        } else {
+            System.out.println("Account not found.");
+            return 0;
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Welcome to Online Money Transaction System!");
+
+        MoneyTransactionSystem transactionSystem = new MoneyTransactionSystem();
+
+        while (true) {
+            System.out.println("\nMenu:");
+            System.out.println("1. Create account");
+            System.out.println("2. Deposit");
+            System.out.println("3. Withdraw");
+            System.out.println("4. Transfer");
+            System.out.println("5. Check balance");
+            System.out.println("6. Exit");
+
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter account ID: ");
+                    String accountId = scanner.nextLine();
+                    transactionSystem.createAccount(accountId);
+                    break;
+                case 2:
+                    System.out.print("Enter account ID: ");
+                    String depositAccountId = scanner.nextLine();
+                    System.out.print("Enter deposit amount: ");
+                    double depositAmount = scanner.nextDouble();
+                    transactionSystem.deposit(depositAccountId, depositAmount);
+                    break;
+                case 3:
+                    System.out.print("Enter account ID: ");
+                    String withdrawAccountId = scanner.nextLine();
+                    System.out.print("Enter withdrawal amount: ");
+                    double withdrawAmount = scanner.nextDouble();
+                    transactionSystem.withdraw(withdrawAccountId, withdrawAmount);
+                    break;
+                case 4:
+                    System.out.print("Enter sender account ID: ");
+                    String fromAccountId = scanner.nextLine();
+                    System.out.print("Enter receiver account ID: ");
+                    String toAccountId = scanner.nextLine();
+                    System.out.print("Enter transfer amount: ");
+                    double transferAmount = scanner.nextDouble();
+                    transactionSystem.transfer(fromAccountId, toAccountId, transferAmount);
+                    break;
+                case 5:
+                    System.out.print("Enter account ID: ");
+                    String checkBalanceAccountId = scanner.nextLine();
+                    double balance = transactionSystem.checkBalance(checkBalanceAccountId);
+                    System.out.println("Current balance: " + balance);
+                    break;
+                case 6:
+                    System.out.println("Thank you for using Online Money Transaction System!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please enter a number between 1 and 6.");
+            }
+        }
+    }
+}
